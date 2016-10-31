@@ -108,7 +108,7 @@ class Simulator(object):
                 
             if self.env.done and self.env.game_state == "Success":
                 self.success_count += 1.0
-        print "Success Rate = {}".format(self.success_count / n_trials)
+        print "Simulator.run: Success Rate = {}".format(self.success_count / n_trials)
 
     def render(self):
         # Clear screen

@@ -61,6 +61,7 @@ class Simulator(object):
 
     def run(self, n_trials=1):
         self.quit = False
+        self.success_count = 0.0
         for trial in xrange(n_trials):
             print "Simulator.run(): Trial {}".format(trial)  # [debug]
             self.env.reset()
@@ -104,6 +105,10 @@ class Simulator(object):
 
             if self.quit:
                 break
+                
+            if self.env.done and self.env.game_state == "Success":
+                self.success_count += 1.0
+        print "Success Rate = {}".format(self.success_count / n_trials)
 
     def render(self):
         # Clear screen

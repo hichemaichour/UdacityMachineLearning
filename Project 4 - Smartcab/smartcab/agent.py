@@ -11,10 +11,15 @@ class LearningAgent(Agent):
         self.color = 'red'  # override color
         self.planner = RoutePlanner(self.env, self)  # simple route planner to get next_waypoint
         # TODO: Initialize any additional variables here
+        self.state = None
 
     def reset(self, destination=None):
         self.planner.route_to(destination)
         # TODO: Prepare for a new trip; reset any variables here, if required
+
+    def random_action(self):
+        from random import choice
+        return choice([None, 'forward', 'left', 'right'])
 
     def update(self, t):
         # Gather inputs
@@ -23,9 +28,14 @@ class LearningAgent(Agent):
         deadline = self.env.get_deadline(self)
 
         # TODO: Update state
+        legal_right = inputs['light'] == 'green' or inputs['left'] != 'forward'
+        legal_forward = inputs['light'] == 'green'
+        legal_left = inputs['light'] == 'green' and inputs['oncoming'] != 'right' and inputs['oncoming'] != 'forward'
+        self.state = {'next_waypoint': self.next_waypoint, 'legal_right': legal_right, 'legal_forward': legal_forward, 'legal_left': legal_left}
+        print self.state
         
         # TODO: Select action according to your policy
-        action = None
+        action = self.random_action()
 
         # Execute action and get reward
         reward = self.env.act(self, action)
@@ -41,7 +51,7 @@ def run():
     # Set up environment and agent
     e = Environment()  # create environment (also adds some dummy traffic)
     a = e.create_agent(LearningAgent)  # create agent
-    e.set_primary_agent(a, enforce_deadline=True)  # specify agent to track
+    e.set_primary_agent(a, enforce_deadline=False)  # specify agent to track
     # NOTE: You can set enforce_deadline=False while debugging to allow longer trials
 
     # Now simulate it

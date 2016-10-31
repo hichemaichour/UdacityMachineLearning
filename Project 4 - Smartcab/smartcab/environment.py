@@ -35,6 +35,7 @@ class Environment(object):
         self.num_dummies = num_dummies  # no. of dummy agents
         
         # Initialize simulation variables
+        self.game_state = "InProgress"
         self.done = False
         self.t = 0
         self.agent_states = OrderedDict()
@@ -75,6 +76,7 @@ class Environment(object):
         self.enforce_deadline = enforce_deadline
 
     def reset(self):
+        self.game_state = "InProgress"
         self.done = False
         self.t = 0
 
@@ -121,9 +123,11 @@ class Environment(object):
         if self.primary_agent is not None:
             agent_deadline = self.agent_states[self.primary_agent]['deadline']
             if agent_deadline <= self.hard_time_limit:
+                self.game_state = "HardTimeLimitExceeded"
                 self.done = True
                 print "Environment.step(): Primary agent hit hard time limit ({})! Trial aborted.".format(self.hard_time_limit)
             elif self.enforce_deadline and agent_deadline <= 0:
+                self.game_state = "TimeLimitExceeded"
                 self.done = True
                 print "Environment.step(): Primary agent ran out of time! Trial aborted."
             self.agent_states[self.primary_agent]['deadline'] = agent_deadline - 1
@@ -209,6 +213,7 @@ class Environment(object):
             if state['location'] == state['destination']:
                 if state['deadline'] >= 0:
                     reward += 10  # bonus
+                self.game_state = "Success"
                 self.done = True
                 print "Environment.act(): Primary agent has reached destination!"  # [debug]
             self.status_text = "state: {}\naction: {}\nreward: {}".format(agent.get_state(), action, reward)

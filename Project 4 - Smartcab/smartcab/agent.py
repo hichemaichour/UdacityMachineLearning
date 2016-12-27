@@ -39,11 +39,14 @@ class LearningAgent(Agent):
         for action in self.env.valid_actions:
             val = self.Q.get((str(state), action), self.default_Q_value)
             if val < best_score - 1e-9:
+                # Better action was found before
                 continue
             elif val > best_score + 1e-9:
+                # This is a better action than the one(s) found before
                 actions = [action]
                 best_score = val
             else:
+                # This action produces the same best_score so far
                 actions.append(action)
                 
         from random import choice

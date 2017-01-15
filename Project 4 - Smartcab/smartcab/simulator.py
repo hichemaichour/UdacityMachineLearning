@@ -110,12 +110,10 @@ class Simulator(object):
             if self.env.done and self.env.game_state == "Success":
                 self.success_count += 1.0
             self.rewards.append(self.env.primary_agent.total_reward)
-        print "Simulator.run(): Success Rate   = {}".format(self.success_count / n_trials)  # debug
+            
         from numpy import mean
-        print "Simulator.run(): Average Reward = {}".format(mean(self.rewards))
-        print "Simulator.run(): Q ="                                                        # debug
-        for k, v in sorted(self.env.primary_agent.Q.iteritems()):                           # debug
-            print k, v
+        self.average_reward = mean(self.rewards)
+        self.success_rate = self.success_count / n_trials
 
     def render(self):
         # Clear screen
